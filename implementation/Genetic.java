@@ -110,7 +110,7 @@ class Genetic{
 				double c = this.mean_fgeneration.get(i-3);
 
 				if(a==b && b==c) {
-					System.out.println("\nFinish criterion met");
+					System.out.println("\nCriterion met");
 					break;
 				}
 			}
