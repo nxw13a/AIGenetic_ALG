@@ -45,41 +45,12 @@ class Genetic{
 
 		this.createPopulation();
 
-		/*
-		System.out.println("\nStarting Generation:");
-		System.out.println("=====================");
-		System.out.println("Population:");
-		for(int x = 0; x < this.population_size; x++) {
-			System.out.println((x + 1) + " - " + this.population.get(x));
-		}
-		*/
-
 		this.testPopulation(); //Eval fitness of initial population
-
-		/*
-		System.out.println("Fit:");
-		for(int x = 0; x < this.population_size; x++) {
-			System.out.println((x + 1) + " - " + this.fitness.get(x));
-		}
-		*/
-
 		//Find best solution of generation
 		this.best_sgeneration.add(this.population.get(this.getBestSolution()));
 
-		//Output best solution of generation
-		System.out.println("\nGeneration: " + 1);
-		System.out.println("Best solution of 1 generation: " + this.best_sgeneration.get(0));
-		System.out.println("Value: " + this.add_up(best_sgeneration.get(0), value_of_items));
-		System.out.println("Cost: " + this.add_up(best_sgeneration.get(0), cost_of_items));
-
 		//Find mean solution of generation
 		this.mean_fgeneration.add(this.getMeanFitness());
-
-		//System.out.println("Mean fitness of initial generation: " + this.mean_fgeneration.get(0));
-
-		//this.best_fgeneration.add(this.evalGene(this.population.get(this.getBestSolution())));
-
-		//System.out.println("Fitness score of best solution of initial generation: " + this.best_fitness_of_generation.get(0));
 
 		makeFutherGenerations();
 	}
@@ -110,7 +81,11 @@ class Genetic{
 				double c = this.mean_fgeneration.get(i-3);
 
 				if(a==b && b==c) {
-					System.out.println("\nCriterion met");
+					System.out.println("\nGeneration: " + (i + 1));
+					System.out.println("Best solution of "+(i+1)+" generation: " + this.best_sgeneration.get(0));
+					System.out.println("Value: " + this.add_up(best_sgeneration.get(0), value_of_items));
+					System.out.println("Cost: " + this.add_up(best_sgeneration.get(0), cost_of_items));
+					System.out.println("Time: " + (((System.currentTimeMillis()-startTime))*.001));
 					break;
 				}
 			}
@@ -130,7 +105,7 @@ class Genetic{
             }
 
             //convergence of organisms 20% chance of mutation
-            if(this.all_identicle(this.population))
+            if(this.all_similar(this.population))
 			{
 				double n = Math.random()*(double)this.population.size();
 				int number = (int) n;
@@ -153,41 +128,14 @@ class Genetic{
 					}
 				}	
 			}
-            /*
-            System.out.println("\nGeneration " + (i + 1) + ":");
-            if((i + 1) < 10) {
-                System.out.println("=============");
-            }
-            if((i + 1) >= 10) {
-                System.out.println("==============");
-            }
-            if((i + 1) >= 100) {
-                System.out.println("===============");
-			}
 
-			System.out.println("Population:");
-            for(int l = 0; l < this.population_size; l++) {
-                System.out.println((l + 1) + " - " + this.population.get(l));
-			}
-			*/
 			this.breed_population.clear();
 
 			this.best_sgeneration.add(this.population.get(this.getBestSolution()));
 
-			//Output best solution of generation
-			System.out.println("\nGeneration: " + (i + 1));
-			System.out.println("Best solution of "+(i+1)+" generation: " + this.best_sgeneration.get(0));
-			System.out.println("Value: " + this.add_up(best_sgeneration.get(0), value_of_items));
-			System.out.println("Cost: " + this.add_up(best_sgeneration.get(0), cost_of_items));
-
 			//Find mean solution of generation
 			this.mean_fgeneration.add(this.getMeanFitness());
 
-			//System.out.println("Mean fitness of initial generation: " + this.mean_fgeneration.get(0));
-
-			//this.best_fgeneration.add(this.evalGene(this.population.get(this.getBestSolution())));
-
-			//System.out.println("Fitness score of best solution of initial generation: " + this.best_fitness_of_generation.get(0));
 
 			i++;
 		}
@@ -243,9 +191,9 @@ class Genetic{
 		return 0;
 	}
 
-	private void mutateGene() {
+	private void mutateGene(int number) {
 
-		String mgene = breed_population.get(breed_population.size() - 1);
+		String mgene = breed_population.get(breed_population.size() - number);
 		String new_mgene;
 		for(int x = 0; x < number_of_items; x++)
 		{
@@ -276,8 +224,8 @@ class Genetic{
 		breed_population.add(new_gene1);
 		breed_population.add(new_gene2);
 
-		mutateGene();
-
+		mutateGene(1);
+		mutateGene(2);
 	}
 
 	private void createPopulation() {
@@ -349,6 +297,14 @@ class Genetic{
 				b_fitness = t_fitness;
 				best_pos = i;
 			}
+			else if (t_fitness == b_fitness)
+			{
+				if(add_up(population.get(best_pos), cost_of_items) > add_up(population.get(i),cost_of_items))
+				{
+					b_fitness = t_fitness;
+					best_pos = i;
+				}
+			}
 		}
 		return best_pos;
 	}
@@ -372,7 +328,7 @@ class Genetic{
 		}
 		return total;
 	}
-	private boolean all_identicle(ArrayList<String> item)
+	private boolean all_similar(ArrayList<String> item)
 	{
 		String hold = item.get(0);
 		for(int x = 1; x < item.size(); x++)
