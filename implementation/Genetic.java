@@ -1,5 +1,9 @@
 package implementation;
 
+import java.awt.Graphics2D;
+
+
+
 import java.io.Console;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -178,7 +182,7 @@ class Genetic{
 	}
 
 	private int selectGene() {
-
+		
 		double rand = Math.random() * total_fgeneration;
 
 		for(int x = 0; x < population_size; x++) {
