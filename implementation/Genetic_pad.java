@@ -6,8 +6,11 @@ import java.awt.Color;
 public class Genetic_pad
 {
 	public int x, y, height = 10, width = 50;
-	public Genetic_pad(Genetic_pong pong)
+	private Genetic gen;
+
+	public Genetic_pad(Genetic_pong pong, Genetic gen)
 	{
+		this.gen = gen;
 		this.x = pong.width / 2 - this.width / 2;
 		this.y = pong.height - this.height;
 	}
@@ -16,10 +19,10 @@ public class Genetic_pad
 		g.setColor(Color.WHITE);
 		g.fillRect(x,y,width,height);
 	}
-	public void move(boolean dir)
+	public void move(boolean left)
 	{
-		int speed = 10;
-		if(dir)
+		int speed = 6;
+		if(left)
 		{
 			if(x - speed > 0)
 			{
@@ -32,13 +35,13 @@ public class Genetic_pad
 		}
 		else
 		{
-			if(x + width + speed < implementation.Genetic_pong.width)
+			if(x + width + speed < Genetic_pong.pong.width)
 			{
 				x+=speed;
 			}
 			else
 			{
-				x = implementation.Genetic_pong.width - width;
+				x = Genetic_pong.pong.width - width;
 			} 
 		}
 	}

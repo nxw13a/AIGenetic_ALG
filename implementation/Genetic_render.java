@@ -1,6 +1,6 @@
 package implementation;
-
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 public class Genetic_render extends JPanel
@@ -12,6 +12,6 @@ public class Genetic_render extends JPanel
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		implementation.Genetic_pong.render(g);
+		Genetic_pong.pong.render((Graphics2D) g);
 	}
 }
