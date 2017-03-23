@@ -12,6 +12,7 @@ public class Genetic_ball
     public int motionX, motionY;
     public int miss = 1;
     private Genetic_pong pong;
+    public boolean hit = false;
     private Genetic gen = new Genetic();
 
 	public Genetic_ball(Genetic_pong pong, Genetic gen)
@@ -68,11 +69,17 @@ public class Genetic_ball
 		{
 			if(gen.distance.size() < miss)
 			{
-
 				gen.distance.add(this.x);
-				System.out.print(miss);
+				if(hit)
+				{
+					gen.hit++;
+					gen.distance.add(this.x);
+					System.out.println(gen.hit);
+				}
+				System.out.print(hit);
 				gen.begin();
 			}
+			hit = false;
 			pad.x = pong.width / 2 - pad.width / 2;
 			pad.y = pong.height - pad.height;
 			spawn();
@@ -111,7 +118,7 @@ public void spawn()
 	{
 		if (this.y < pad.y + pad.height && this.y + height > pad.y && this.x < pad.x + pad.width && this.x + width > pad.x)
 		{
-
+			hit = true;
 			return 1; //bounce
 		}
 		return 0;

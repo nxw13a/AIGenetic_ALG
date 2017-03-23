@@ -96,7 +96,7 @@ public class Genetic_pong implements ActionListener//, KeyListener
 			    update();
 		 		g_render.repaint();
 			}
-			if(x > 15)
+			if(x >= 16)
 				x = 0;
 			x++;
 		}
@@ -116,7 +116,7 @@ public class Genetic_pong implements ActionListener//, KeyListener
 			    update();
 		 		g_render.repaint();
 			}
-			if(x > 15)
+			if(x >= 16)
 				x = 0;
 			x++;
 		}

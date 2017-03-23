@@ -16,8 +16,9 @@ public class Genetic{
 	public ArrayList<String> move = new ArrayList<String>();
 	private ArrayList<String> population = new ArrayList<String>();
 	private ArrayList<Integer> fitness = new ArrayList<Integer>();
+	private ArrayList<String> best_sgeneration = new ArrayList<String>();
 	private int total_fitness = 0;
-	private int hit = 0;
+	public int hit = 0;
 	public boolean record = false;
 	private int population_size = 100;
 	public int number_of_moves = 26;
@@ -49,6 +50,9 @@ public class Genetic{
 		record = true;
 		this.createPopulation();
 		this.testPopulation();
+		//System.out.println(population);
+		this.best_sgeneration.add(this.population.get(this.getBestSolution()));
+		move.set(hit, best_sgeneration.get(hit));
 	}
 
 	private void createPopulation() {
@@ -87,5 +91,26 @@ public class Genetic{
 		}
 		return gene.toString();
 	}
+		private int getBestSolution() {
+		int t_fitness = 0;
+		int b_fitness = 1000;
+		int best_pos = 0;
+
+		for(int i = 0; i < population_size; i++) {
+			t_fitness = evalGene(population.get(i));
+			if(t_fitness <= b_fitness)
+			{
+				b_fitness = t_fitness;
+				best_pos = i;
+			}
+			else if(t_fitness == 0)
+			{
+				return i;
+			}
+
+		}
+		return best_pos;
+	}
+
 
 }
