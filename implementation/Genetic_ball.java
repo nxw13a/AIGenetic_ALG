@@ -25,7 +25,7 @@ public class Genetic_ball
 
 	public void update(Genetic_pad pad)
 	{
-		int speed = 3;
+		int speed = 5;
 
 		this.x += motionX * speed;
 		this.y += motionY * speed;
@@ -67,19 +67,14 @@ public class Genetic_ball
 		}
 		if((this.y + height - motionY) > pong.height)
 		{
-			if(gen.distance.size() < miss)
-			{
-				gen.distance.add(this.x);
-				if(hit)
-				{
-					gen.hit++;
-					gen.distance.add(this.x);
-					System.out.println(gen.hit);
-				}
-				System.out.print(hit);
-				gen.begin();
-			}
-			hit = false;
+			gen.distance.set(gen.hit, this.x);
+			//System.out.println(gen.distance.get(gen.hit));
+			//if(gen.hit == 0)
+			//{
+				//gen.begin();
+			//}
+			gen.begin();
+			pong.pong1 = true;
 			pad.x = pong.width / 2 - pad.width / 2;
 			pad.y = pong.height - pad.height;
 			spawn();
@@ -91,7 +86,7 @@ public class Genetic_ball
 			if (motionY == 0)
 			{
 				this.motionY = -1;
-				miss++;
+				//miss++;
 
 			}
 
@@ -102,23 +97,30 @@ public class Genetic_ball
 public void spawn()
 	{
 		motionY = 0;
-		this.x = 0;
+		this.x = 50;
 		this.y = 0;
+		gen.hit = 0;
 
-		this.motionX = -2 + 2;
+		this.motionX = -2 + -1;
 
 		if (motionY == 0)
 		{
-			motionY = 1;
+			motionY = -1;
 		}
 
 		motionX = 1;
+		//gen.begin();
 	}
 	public int checkCollision(Genetic_pad pad)
 	{
 		if (this.y < pad.y + pad.height && this.y + height > pad.y && this.x < pad.x + pad.width && this.x + width > pad.x)
 		{
 			hit = true;
+			gen.hit++;
+			hit = false;
+			pong.pong1 = true;
+			gen.position.set(gen.hit,pad.x);
+			//System.out.println(gen.hit);
 			return 1; //bounce
 		}
 		return 0;

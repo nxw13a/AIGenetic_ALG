@@ -13,7 +13,7 @@ public class Genetic_pad
 		this.gen = gen;
 		this.x = pong.width / 2 - this.width / 2;
 		this.y = pong.height - this.height;
-		gen.position = this.x;
+		gen.position.add(this.x);
 	}
 	public void render(Graphics g)
 	{
