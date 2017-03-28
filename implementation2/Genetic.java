@@ -167,7 +167,7 @@ class Genetic{
 
 		double n = Math.random()*(breed_population.size()); //static population size
 		int number = (int) n;
-		if((number > 0) && (number < breed_population.size()))
+		if((number > 0) && (number < breed_population.size()) && breed_population.size() > 0)
 		{
 			//System.out.println(number + " " + breed_population.size());
 			breed_population.remove(number);

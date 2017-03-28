@@ -73,7 +73,7 @@ public class Genetic_pong implements ActionListener//, KeyListener
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		pad.render(g);
 		g.setFont(new Font("Arial", 1, 12));
-		g.drawString("Generation: "+gen.generation +"                                                                                 HIT: "+gen.hit+"/"+gen.bounce, 0, 10);
+		g.drawString("Generation: "+gen.generation +"                                                            HIT: "+gen.hit+"/"+gen.bounce, 0, 10);
 		ball.render(g);
 
 	}

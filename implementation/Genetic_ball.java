@@ -68,6 +68,7 @@ public class Genetic_ball
 		if((this.y + height - motionY) > pong.height)
 		{
 			gen.distance.set(gen.hit, this.x);
+			System.out.println(pad.x + " | " + this.x);
 			//System.out.println(gen.distance.get(gen.hit));
 			//if(gen.hit == 0)
 			//{
