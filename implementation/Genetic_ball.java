@@ -68,7 +68,8 @@ public class Genetic_ball
 		if((this.y + height - motionY) > pong.height)
 		{
 			gen.distance.set(gen.hit, this.x);
-			System.out.println(pad.x + " | " + this.x);
+			gen.position.set(gen.hit,pad.x);
+			//System.out.println(pad.x + " | " + this.x);
 			//System.out.println(gen.distance.get(gen.hit));
 			//if(gen.hit == 0)
 			//{
@@ -98,11 +99,11 @@ public class Genetic_ball
 public void spawn()
 	{
 		motionY = 0;
-		this.x = 50;
+		this.x = 40;
 		this.y = 0;
 		gen.hit = 0;
 
-		this.motionX = -2 + -1;
+		this.motionX = -2;
 
 		if (motionY == 0)
 		{
@@ -120,7 +121,6 @@ public void spawn()
 			gen.hit++;
 			hit = false;
 			pong.pong1 = true;
-			gen.position.set(gen.hit,pad.x);
 			//System.out.println(gen.hit);
 			return 1; //bounce
 		}

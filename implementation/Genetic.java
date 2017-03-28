@@ -30,8 +30,8 @@ public class Genetic{
 	public int hit = 0;
 	private int same = -1;
 	public boolean record = false;
-	private int population_size = 100;
-	public int number_of_moves = 70;
+	private int population_size =1000;
+	public int number_of_moves = 100;
 	public int highest = 0;
 	//public int position;
 
@@ -39,16 +39,17 @@ public class Genetic{
 
 	private int test_move(String id)
 	{
-		int temp = position.get(hit);
+		int temp = position.get(highest);
+		//System.out.println(temp);
 		for(int x = 0; x < number_of_moves; x++)
 		{
 			if(id.charAt(x) == '1')
 			{
-				temp -= 6;
+				temp -= 4;
 			}
 			else
 			{
-				temp += 6;
+				temp += 4;
 			}
 		}
 		return temp;
@@ -60,7 +61,7 @@ public class Genetic{
 		for(int x = 0; x < bounce + 1; x++)
 		{
 			position.add(-1);
-			distance.add(-1);
+			distance.add(0);
 			best_sgeneration.add("");
 			move.add("");
 		}
@@ -89,7 +90,7 @@ public class Genetic{
 			this.testPopulation();
 			//System.out.println(population);
 			this.best_sgeneration.set(highest,this.population.get(this.getBestSolution()));
-			move.set(hit, best_sgeneration.get(highest));
+			move.set(highest, best_sgeneration.get(highest));
 			same = highest;
 		}
 		else{
@@ -108,6 +109,7 @@ public class Genetic{
 		for(int x = 0; x < this.population_size / 2; x++){
 			this.breedPopulation();
 		}
+		//System.out.println(fitness);
 		this.fitness.clear();
 		this.evalBreedPopulation();
 		for(int k = 0; k < this.breed_population.size(); k++) {
@@ -145,8 +147,19 @@ public class Genetic{
 
 		this.breed_population.clear();
 		this.best_sgeneration.set(highest,this.population.get(this.getBestSolution()));
-		move.set(hit, best_sgeneration.get(highest));
-	}
+		move.set(highest, best_sgeneration.get(highest));
+		int avg = 0;
+		for(int x = 0; x < fitness.size(); x++)
+			avg += fitness.get(x);
+		avg /= fitness.size();
+		/*
+		if(avg <= 30)
+		{
+			this.population.clear();
+			this.createPopulation();	
+		}
+		*/
+	}	
 
 	private void evalBreedPopulation() {
 		//fitness_count += 1;
@@ -179,7 +192,7 @@ public class Genetic{
 		}
 		*/
 
-
+		
 		gene1 = selectGene();
 		gene2 = selectGene();
 
@@ -195,8 +208,9 @@ public class Genetic{
 		//crossover_c = crossover_c + 1;
 		Random generator = new SecureRandom();
 		int cross_point = generator.nextInt(number_of_moves) + 1;
-
 		new_gene1 = population.get(gene1).substring(0, cross_point) + population.get(gene2).substring(cross_point);
+		
+		cross_point = generator.nextInt(number_of_moves) + 1;
 		new_gene2 = population.get(gene2).substring(0, cross_point) + population.get(gene1).substring(cross_point);
 		
 		breed_population.add(new_gene1);
@@ -209,18 +223,13 @@ public class Genetic{
 
 	private int selectGene() {
 		
+		//double r = Math.random() * (distance.get);
+		//int rand = (int) r;
+		//System.out.println(rand);
+		Random r = new SecureRandom();
+		int rand = r.nextInt(population.size());
+		return rand;
 
-		double r = Math.random() * total_fgeneration;
-		int rand = (int) r;
-		for(int x = 0; x < population.size(); x++) {
-			//Random r = new SecureRandom();
-			if(rand <= fitness.get(x)) {
-				return x;
-			}
-			rand = rand - fitness.get(x);
-		}
-
-		return 0;
 	}
 
 	private void mutateGene(int number) {
@@ -262,7 +271,7 @@ public class Genetic{
 	{
 		int hold = test_move(gene);
 		int cool = distance.get(highest) - hold;
-
+		//System.out.println(distance.get(highest)+" - "+hold+" = "+cool );
 		return ((cool < 0) ? cool * -1 : cool);
 	}
 	private String makeGene() {
@@ -270,10 +279,9 @@ public class Genetic{
 		StringBuilder gene = new StringBuilder(number_of_moves);
 
 		char c;
-
 		for(int x = 0; x < number_of_moves; x++) {
 			Random r = new SecureRandom();
-			c = ((r.nextInt(100) < 50) ? '0' : '1');
+			c = ((r.nextInt(100) > 50) ? '0' : '1');
 			gene.append(c);
 		}
 		return gene.toString();
