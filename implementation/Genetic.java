@@ -8,276 +8,81 @@ import java.io.PrintStream;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.Random;
+import java.security.SecureRandom;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.Random;
 
 
-class Genetic{
+public class Genetic{
 
-	private int population_size = 0;
-	private int number_of_items = 0;
-	private int generation_counter = 1;
-	private int crossover_c = 0;
-	private static int fitness_count = 0;
-	private double total_fitness = 0;
-	private double knapsack_capacity = 0;
-	private double total_fgeneration = 0;
-
+	public ArrayList<Integer>  distance = new ArrayList<Integer>();
+	public ArrayList<Integer> position = new ArrayList<Integer>();
+	public ArrayList<String> move = new ArrayList<String>();
 	private ArrayList<String> population = new ArrayList<String>();
-	private ArrayList<Double> fitness = new ArrayList<Double>();
-	private ArrayList<Double> cost_of_items = new ArrayList<Double>();
-	private ArrayList<Double> value_of_items = new ArrayList<Double>();
+	private ArrayList<Integer> fitness = new ArrayList<Integer>();
 	private ArrayList<String> best_sgeneration = new ArrayList<String>();
-	private ArrayList<Double> mean_fgeneration = new ArrayList<Double>();
-	private ArrayList<String> breed_population = new ArrayList<String>();
+	public int bounce = 10;
+	public int generation = 0;
+	private int total_fitness = 0;
+	public int hit = 0;
+	public boolean record = false;
+	private int population_size = 100;
+	public int number_of_moves = 100;
+	public int highest = 0;
+	//public int position;
 
-	public static void main(String[] args)
+
+
+	private int test_move(String id)
 	{
-		//System.out.println("Hello this James");
-		Genetic gen = new Genetic();
-		System.out.println("\nThe fitness function was used: " + return_fit_count());
+		int temp = position.get(hit);
+		for(int x = 0; x < number_of_moves; x++)
+		{
+			if(id.charAt(x) == '1')
+			{
+				temp -= 6;
+			}
+			else
+			{
+				temp += 6;
+			}
+		}
+		return temp;
 	}
 
-	public Genetic() {
-		this.getInput();
-
-		this.knapsack();
+	
+	public Genetic()
+	{
+		for(int x = 0; x < bounce + 1; x++)
+		{
+			position.add(-1);
+			distance.add(-1);
+			best_sgeneration.add("");
+			move.add("");
+		}
 	}
-	public void knapsack() {
-
+	public void begin()
+	{
+		record = true;
+		if(hit > highest)
+		{
+			highest = hit;
+		}
 		this.createPopulation();
-
-		/*
-		System.out.println("\nStarting Generation:");
-		System.out.println("=====================");
-		System.out.println("Population:");
-		for(int x = 0; x < this.population_size; x++) {
-			System.out.println((x + 1) + " - " + this.population.get(x));
-		}
-		*/
-
-		this.testPopulation(); //Eval fitness of initial population
-
-		/*
-		System.out.println("Fit:");
-		for(int x = 0; x < this.population_size; x++) {
-			System.out.println((x + 1) + " - " + this.fitness.get(x));
-		}
-		*/
-
-		//Find best solution of generation
-		this.best_sgeneration.add(this.population.get(this.getBestSolution()));
-
-		//Output best solution of generation
-		System.out.println("\nGeneration: " + 1);
-		System.out.println("Best solution of 1 generation: " + this.best_sgeneration.get(0));
-		System.out.println("Value: " + this.add_up(best_sgeneration.get(0), value_of_items));
-		System.out.println("Cost: " + this.add_up(best_sgeneration.get(0), cost_of_items));
-
-		//Find mean solution of generation
-		this.mean_fgeneration.add(this.getMeanFitness());
-
-		//System.out.println("Mean fitness of initial generation: " + this.mean_fgeneration.get(0));
-
-		//this.best_fgeneration.add(this.evalGene(this.population.get(this.getBestSolution())));
-
-		//System.out.println("Fitness score of best solution of initial generation: " + this.best_fitness_of_generation.get(0));
-
-		makeFutherGenerations();
-	}
-
-	private void getInput() {
-		double[] value = {3,2,5,4,3,7,6,1,5,4,3,2,5,4,3,7,6,1,5,4};
-		double[] weight = {2,3,1,1,4,5,3,5,1,2,2,3,1,1,4,5,3,5,1,2};
-		number_of_items = 20;
-		for(int x = 0; x < number_of_items; x++)
-		{
-			value_of_items.add(value[x]);
-			cost_of_items.add(weight[x]);
-		}
-		knapsack_capacity = 20;
-		population_size = 100;
-
-	}
-	private void makeFutherGenerations()
-	{
-		int i = 1;
-		long startTime = System.currentTimeMillis(); //fetch starting time
-		 while(false||(System.currentTimeMillis()-startTime)<600000) {
-
-			if((i > 4)) {
-
-				double a = this.mean_fgeneration.get(i-1);
-				double b = this.mean_fgeneration.get(i-2);
-				double c = this.mean_fgeneration.get(i-3);
-
-				if(a==b && b==c) {
-					System.out.println("\nCriterion met");
-					break;
-				}
-			}
-
-			this.crossover_c = 0;
-
-			for(int x = 0; x < this.population_size / 2; x++) {
-				this.breedPopulation();
-			}
-
-			this.fitness.clear();
-
-			this.evalBreedPopulation();
-
-			 for(int k = 0; k < this.breed_population.size(); k++) {
-                this.population.set(k, this.breed_population.get(k));
-            }
-
-            //convergence of organisms 20% chance of mutation
-            if(this.all_identicle(this.population))
-			{
-				double n = Math.random()*(double)this.population.size();
-				int number = (int) n;
-				String hold = this.population.get(number);
-				this.population.set(number, this.population.get(0));
-				this.population.set(0,hold);
-				for(int y = 1; y < this.population.size(); y++)
-				{
-					String mgene = population.get(y);
-					String new_mgene;
-					for(int x = 1; x < number_of_items; x++)
-					{
-						double w_gene = Math.random() * 100;
-						if(w_gene <= 20) 
-						{
-							char c = ((mgene.charAt(x) == '1') ? '0' : '1');
-							new_mgene = mgene.substring(0,x) + c + mgene.substring(x+1);
-							population.set(breed_population.size() - 1, new_mgene);
-						}
-					}
-				}	
-			}
-            /*
-            System.out.println("\nGeneration " + (i + 1) + ":");
-            if((i + 1) < 10) {
-                System.out.println("=============");
-            }
-            if((i + 1) >= 10) {
-                System.out.println("==============");
-            }
-            if((i + 1) >= 100) {
-                System.out.println("===============");
-			}
-
-			System.out.println("Population:");
-            for(int l = 0; l < this.population_size; l++) {
-                System.out.println((l + 1) + " - " + this.population.get(l));
-			}
-			*/
-			this.breed_population.clear();
-
-			this.best_sgeneration.add(this.population.get(this.getBestSolution()));
-
-			//Output best solution of generation
-			System.out.println("\nGeneration: " + (i + 1));
-			System.out.println("Best solution of "+(i+1)+" generation: " + this.best_sgeneration.get(0));
-			System.out.println("Value: " + this.add_up(best_sgeneration.get(0), value_of_items));
-			System.out.println("Cost: " + this.add_up(best_sgeneration.get(0), cost_of_items));
-
-			//Find mean solution of generation
-			this.mean_fgeneration.add(this.getMeanFitness());
-
-			//System.out.println("Mean fitness of initial generation: " + this.mean_fgeneration.get(0));
-
-			//this.best_fgeneration.add(this.evalGene(this.population.get(this.getBestSolution())));
-
-			//System.out.println("Fitness score of best solution of initial generation: " + this.best_fitness_of_generation.get(0));
-
-			i++;
-		}
-	}
-
-	private void evalBreedPopulation() {
-		fitness_count += 1;
-		total_fgeneration = 0;
-		for(int i = 0; i < breed_population.size() ; i++) {
-			double temp_f = evalGene(breed_population.get(i));
-			fitness.add(temp_f);
-			total_fgeneration = total_fgeneration + temp_f;
-		}
-	}
-
-	private void breedPopulation() {
-		int gene1;
-		int gene2;
-
-		generation_counter = generation_counter + 1;
-
-		if(population_size % 2 == 1) {
-			breed_population.add(best_sgeneration.get(generation_counter - 1));
-		}
-
-		double n = Math.random()*(breed_population.size()); //static population size
-		int number = (int) n;
-		if((number > 0) && (number < breed_population.size()))
-		{
-			//System.out.println(number + " " + breed_population.size());
-			breed_population.remove(number);
-		}
-
-
-		gene1 = selectGene();
-		gene2 = selectGene();
-
-		crossoverGenes(gene1,gene2);
-
-	}
-
-	private int selectGene() {
-
-		double rand = Math.random() * total_fgeneration;
-
-		for(int x = 0; x < population_size; x++) {
-			if(rand <= fitness.get(x)) {
-				return x;
-			}
-			rand = rand - fitness.get(x);
-		}
-
-		return 0;
-	}
-
-	private void mutateGene() {
-
-		String mgene = breed_population.get(breed_population.size() - 1);
-		String new_mgene;
-		for(int x = 0; x < number_of_items; x++)
-		{
-			double w_gene = Math.random() * 1000;
-			if(w_gene <= 5) 
-			{
-				char c = ((mgene.charAt(x) == '1') ? '0' : '1');
-				new_mgene = mgene.substring(0,x) + c + mgene.substring(x+1);
-				breed_population.set(breed_population.size() - 1, new_mgene);
-			}
-		}	
-
-	}
-
-	private void crossoverGenes(int gene1, int gene2) {
-		String new_gene1;
-		String new_gene2;
-
-		double rand_crossover = Math.random();
-
-		crossover_c = crossover_c + 1;
-		Random generator = new Random();
-		int cross_point = generator.nextInt(number_of_items) + 1;
-
-		new_gene1 = population.get(gene1).substring(0, cross_point) + population.get(gene2).substring(cross_point);
-		new_gene2 = population.get(gene2).substring(0, cross_point) + population.get(gene1).substring(cross_point);
-		
-		breed_population.add(new_gene1);
-		breed_population.add(new_gene2);
-
-		mutateGene();
-
+		this.testPopulation();
+		//System.out.println(population);
+		this.best_sgeneration.set(highest,this.population.get(this.getBestSolution()));
+		move.set(hit, best_sgeneration.get(highest));
+		//System.out.println(highest);
+		//System.out.println(move);
+		//System.out.println(population);
+		//System.out.println(position);
+		this.population.clear();
+		//this.best_sgeneration.clear();
+		generation++;
+		//System.out.println(generation);
+		//record = false;
 	}
 
 	private void createPopulation() {
@@ -288,103 +93,56 @@ class Genetic{
 		}
 	}
 
-	private String makeGene() {
-
-		StringBuilder gene = new StringBuilder(number_of_items);
-
-		char c;
-
-		for(int x = 0; x < number_of_items; x++) {
-			
-			double rnd = Math.random();
-			c = ((rnd > 0.5) ? '0' : '1');
-			gene.append(c);
-
-		}
-
-		return gene.toString();
-	}
-
 	private void testPopulation() {
 		total_fitness = 0;
-
 		for(int x = 0; x < population_size; x++) {
 
-			double temp = evalGene(population.get(x));
+			int temp = evalGene(population.get(x));
 			fitness.add(temp);
 			total_fitness = total_fitness + temp;
 		}
 	}
 
-	private double evalGene(String gene) {
-		double total_cost = 0;
-		double total_value = 0;
-		double fitness_value = 0;
-		double diff = 0;
-		char c = '0';
+	private int evalGene(String gene)
+	{
+		int hold = test_move(gene);
+		int cool = distance.get(highest) - hold;
 
-		for(int x = 0; x < number_of_items; x++) {
-			c = gene.charAt(x);
-
-			if(c == '1') {
-				total_cost = total_cost + cost_of_items.get(x);
-				total_value = total_value + value_of_items.get(x);
-			}
-		}
-
-		diff = knapsack_capacity - total_cost;
-
-		return ((diff < 0) ? fitness_value : total_value);
-
+		return ((cool < 0) ? cool * -1 : cool);
 	}
+	private String makeGene() {
 
-	private int getBestSolution() {
+		StringBuilder gene = new StringBuilder(number_of_moves);
+
+		char c;
+
+		for(int x = 0; x < number_of_moves; x++) {
+			Random r = new SecureRandom();
+			c = ((r.nextInt(100) < 50) ? '0' : '1');
+			gene.append(c);
+		}
+		return gene.toString();
+	}
+		private int getBestSolution() {
+		int t_fitness = 0;
+		int b_fitness = 1000;
 		int best_pos = 0;
-		double t_fitness = 0;
-		double b_fitness = 0;
 
 		for(int i = 0; i < population_size; i++) {
 			t_fitness = evalGene(population.get(i));
-			if(t_fitness > b_fitness) {
+			if(t_fitness <= b_fitness)
+			{
 				b_fitness = t_fitness;
 				best_pos = i;
 			}
+			else if(t_fitness == 0)
+			{
+				return i;
+			}
+
 		}
 		return best_pos;
 	}
 
-	private double getMeanFitness() {
-		double t_fitness = 0;
-
-		for(int x = 0; x < fitness.size(); x++) {
-			t_fitness = t_fitness + fitness.get(x);
-		}
-
-		return (double)(t_fitness / population_size);
-	}
-
-	private double add_up(String bit, ArrayList<Double> item)
-	{
-		double total = 0;
-		for(int x = 0; x < item.size(); x++)
-		{
-			total += ((bit.charAt(x) == '1') ? item.get(x) : 0);
-		}
-		return total;
-	}
-	private boolean all_identicle(ArrayList<String> item)
-	{
-		String hold = item.get(0);
-		for(int x = 1; x < item.size(); x++)
-		{
-			if(item.get(x).equals(hold) == false)
-				return false;
-		}
-		return true;
-	}
-	private static int return_fit_count()
-	{
-		return fitness_count;
-	}
 
 }

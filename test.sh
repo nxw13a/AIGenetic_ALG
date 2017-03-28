@@ -1,2 +1,2 @@
-javac -cp "." implementation/Genetic.java
-java -cp "." implementation.Genetic
+javac -cp "." implementation2/Genetic.java
+java -cp "." implementation2.Genetic
