@@ -1,21 +1,14 @@
 package implementation2;
 
-import java.awt.Graphics2D;
+import java.io.*;
+import java.lang.*;
+import java.util.*;
 
-
-
-import java.io.Console;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.lang.StringBuilder;
-import java.util.ArrayList;
-import java.util.Random;
 
 
 class Genetic{
 
+	private static String file;
 	private int population_size = 0;
 	private int number_of_items = 0;
 	private int generation_counter = 1;
@@ -24,14 +17,69 @@ class Genetic{
 	private double total_fitness = 0;
 	private double knapsack_capacity = 0;
 	private double total_fgeneration = 0;
-
+	private ArrayList<String> final_sol = new ArrayList<String>();
+	private ArrayList<String> name2  = new ArrayList<String>();
+	private ArrayList<Double> cost  = new ArrayList<Double>();
+	private ArrayList<Double> weight  = new ArrayList<Double>();
+	
 	private ArrayList<String> population = new ArrayList<String>();
 	private ArrayList<Double> fitness = new ArrayList<Double>();
-	private ArrayList<Double> cost_of_items = new ArrayList<Double>();
-	private ArrayList<Double> value_of_items = new ArrayList<Double>();
+
+	private ArrayList<Double> cost_of_items;
+	private ArrayList<Double> value_of_items;
+
 	private ArrayList<String> best_sgeneration = new ArrayList<String>();
 	private ArrayList<Double> mean_fgeneration = new ArrayList<Double>();
 	private ArrayList<String> breed_population = new ArrayList<String>();
+
+	private void CSVparser()
+	{
+		String file_name = file;
+		String csvFile = new File("resources/"+file_name).getAbsolutePath();
+		BufferedReader br = null;
+		String line = "";
+		int count = 0;
+		
+		try {
+			//csv parser
+			br = new BufferedReader(new FileReader(csvFile));
+			String text = br.readLine();
+			this.knapsack_capacity = Double.parseDouble(text);
+
+			while((line = br.readLine()) != null) {
+				String hold = "";
+				String hold1 = "";
+				String hold2 = "";
+				String[] data = line.split(",");
+				hold = data[0].replace("\"","");
+				hold = hold.replaceAll("^\"|\"$", "");
+				hold1 = data[1].replace("\"","");
+				hold1 = hold1.replaceAll("^\"|\"$", "");
+				hold2 = data[2].replace("\"","");
+				hold2 = hold2.replaceAll("^\"|\"$", "");
+
+				this.name2.add(hold);
+				this.cost.add(Double.parseDouble(hold1));
+				this.weight.add(Double.parseDouble(hold2));
+				count++;
+			}
+
+			this.number_of_items = count;
+		}
+		catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+	}
 
 	public static void main(String[] args)
 	{
@@ -59,17 +107,23 @@ class Genetic{
 		makeFutherGenerations();
 	}
 
-	private void getInput() {
-		double[] value = {3,2,5,4,3,7,6,1,5,4,3,2,5,4,3,7,6,1,5,4};
-		double[] weight = {2,3,1,1,4,5,3,5,1,2,2,3,1,1,4,5,3,5,1,2};
-		number_of_items = 20;
+	private void convert(String name)
+	{
 		for(int x = 0; x < number_of_items; x++)
 		{
-			value_of_items.add(value[x]);
-			cost_of_items.add(weight[x]);
+			if(name.charAt(x) == '1')
+				final_sol.add(name2.get(x));
 		}
-		knapsack_capacity = 20;
-		population_size = 100;
+	}
+	private void getInput() {
+
+		Scanner user_input = new Scanner(System.in);
+        System.out.println("ENTER FILE NAME: ");
+        file = user_input.next();
+        CSVparser();
+        value_of_items = new ArrayList<Double>(weight);
+		cost_of_items = new ArrayList<Double>(cost);
+        population_size = 100;
 
 	}
 	private void makeFutherGenerations()
@@ -77,7 +131,7 @@ class Genetic{
 		int i = 1;
 		long startTime = System.currentTimeMillis(); //fetch starting time
 		 while(false||(System.currentTimeMillis()-startTime)<600000) {
-
+		 	//System.out.println(i);
 			if((i > 4)) {
 
 				double a = this.mean_fgeneration.get(i-1);
@@ -86,7 +140,8 @@ class Genetic{
 
 				if(a==b && b==c) {
 					System.out.println("\nGeneration: " + (i + 1));
-					System.out.println("Best solution of "+(i+1)+" generation: " + this.best_sgeneration.get(0));
+					convert(this.best_sgeneration.get(0));
+					System.out.println("Best solution of "+(i+1)+" generation: " + final_sol);
 					System.out.println("Value: " + this.add_up(best_sgeneration.get(0), value_of_items));
 					System.out.println("Cost: " + this.add_up(best_sgeneration.get(0), cost_of_items));
 					System.out.println("Time: " + (((System.currentTimeMillis()-startTime))*.001));

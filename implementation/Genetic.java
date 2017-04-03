@@ -30,11 +30,10 @@ public class Genetic{
 	public int hit = 0;
 	private int same = -1;
 	public boolean record = false;
-	private int population_size =1000;
+	private int population_size =10000;
 	public int number_of_moves = 100;
 	public int highest = 0;
 	//public int position;
-
 
 
 	private int test_move(String id)
@@ -65,6 +64,7 @@ public class Genetic{
 			best_sgeneration.add("");
 			move.add("");
 		}
+
 	}
 	public void begin()
 	{
@@ -100,7 +100,7 @@ public class Genetic{
 			//System.out.println(population);
 		}
 		generation++;
-		//System.out.println(move);
+		//System.out.println(move.get(highest));
 		//record = false;
 	}
 

@@ -85,7 +85,7 @@ public class Genetic_pong implements ActionListener//, KeyListener
 	//@Override
 	public void actionPerformed(ActionEvent e)
 	{
-		//System.out.println(gen.hit);
+		System.out.println(gen.hit);
 		if(gen.record && (x < gen.number_of_moves) && gen.move.get(gen.hit) != "" && gen.hit < gen.bounce)
 		{
 			//gen.begin();
